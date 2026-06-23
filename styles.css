@@ -77,6 +77,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--black); box-shad
 .view { display: none; }
 .view.active { display: block; }
 .conversation-toolbar { justify-content: space-between; gap: 12px; padding: 16px 18px; }
+.toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 .thread { display: grid; align-content: start; gap: 12px; min-height: 430px; max-height: 52vh; overflow: auto; padding: 0 18px 18px; }
 .message { display: grid; gap: 5px; width: min(78%, 700px); }
 .message.candidate { justify-self: end; }
@@ -117,6 +118,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--black); box-shad
 .kernel-card span { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
 .reasoning-log { min-height: 190px; margin: 0; border: 1px solid #242a26; border-radius: 7px; padding: 12px; color: #f4f8f5; background: #111614; font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace; white-space: pre-wrap; }
 @media (max-width: 1220px) { .workspace { grid-template-columns: 340px 1fr; } .intelligence-panel { grid-column: 1 / -1; min-height: unset; } .agent-state { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 880px) { .app-shell { padding: 10px; } .topbar, .agent-header { align-items: stretch; flex-direction: column; } .topbar-actions { justify-content: flex-start; } .workspace, .split-fields, .brief-grid, .sequence-item, .reply-box { grid-template-columns: 1fr; } .context-panel, .intelligence-panel, .agent-console { min-height: unset; } .score-row, .quick-replies, .trait-grid, .agent-state { grid-template-columns: 1fr 1fr; } .message { width: 100%; } }
+@media (max-width: 880px) { .toolbar-actions { justify-content: flex-start; } .app-shell { padding: 10px; } .topbar, .agent-header { align-items: stretch; flex-direction: column; } .topbar-actions { justify-content: flex-start; } .workspace, .split-fields, .brief-grid, .sequence-item, .reply-box { grid-template-columns: 1fr; } .context-panel, .intelligence-panel, .agent-console { min-height: unset; } .score-row, .quick-replies, .trait-grid, .agent-state { grid-template-columns: 1fr 1fr; } .message { width: 100%; } }
 @media (max-width: 560px) { .score-row, .quick-replies, .trait-grid, .agent-state { grid-template-columns: 1fr; } .agent-nav { overflow-x: auto; } }
+
 
