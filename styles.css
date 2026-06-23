@@ -100,10 +100,11 @@ input:focus, textarea:focus, select:focus { border-color: var(--black); box-shad
 .brief-card { min-height: 180px; border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 16px; }
 .brief-card.wide { grid-column: 1 / -1; }
 .brief-card p:last-child { margin-bottom: 0; color: var(--muted); line-height: 1.55; }
-.trait-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
-.trait { min-height: 114px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfcfb; }
-.trait strong { display: block; margin-bottom: 8px; }
-.trait p { margin: 0; color: var(--muted); line-height: 1.4; font-size: 13px; }
+.trait-grid, .playbook-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.trait, .playbook-card { min-height: 114px; border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfcfb; }
+.trait strong, .playbook-card strong { display: block; margin-bottom: 8px; }
+.trait p, .playbook-card p { margin: 0; color: var(--muted); line-height: 1.4; font-size: 13px; }
+.playbook-card span { display: inline-flex; margin-bottom: 8px; padding: 4px 7px; border-radius: 999px; color: var(--green); background: var(--green-soft); font-size: 11px; font-weight: 820; }
 .agent-state { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 14px 0; }
 .intel-section { padding-top: 14px; border-top: 1px solid var(--line); }
 .intel-section + .intel-section { margin-top: 16px; }
@@ -118,7 +119,8 @@ input:focus, textarea:focus, select:focus { border-color: var(--black); box-shad
 .kernel-card span { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; }
 .reasoning-log { min-height: 190px; margin: 0; border: 1px solid #242a26; border-radius: 7px; padding: 12px; color: #f4f8f5; background: #111614; font: 12px/1.55 "SFMono-Regular", Consolas, "Liberation Mono", monospace; white-space: pre-wrap; }
 @media (max-width: 1220px) { .workspace { grid-template-columns: 340px 1fr; } .intelligence-panel { grid-column: 1 / -1; min-height: unset; } .agent-state { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 880px) { .toolbar-actions { justify-content: flex-start; } .app-shell { padding: 10px; } .topbar, .agent-header { align-items: stretch; flex-direction: column; } .topbar-actions { justify-content: flex-start; } .workspace, .split-fields, .brief-grid, .sequence-item, .reply-box { grid-template-columns: 1fr; } .context-panel, .intelligence-panel, .agent-console { min-height: unset; } .score-row, .quick-replies, .trait-grid, .agent-state { grid-template-columns: 1fr 1fr; } .message { width: 100%; } }
-@media (max-width: 560px) { .score-row, .quick-replies, .trait-grid, .agent-state { grid-template-columns: 1fr; } .agent-nav { overflow-x: auto; } }
+@media (max-width: 880px) { .toolbar-actions { justify-content: flex-start; } .app-shell { padding: 10px; } .topbar, .agent-header { align-items: stretch; flex-direction: column; } .topbar-actions { justify-content: flex-start; } .workspace, .split-fields, .brief-grid, .sequence-item, .reply-box { grid-template-columns: 1fr; } .context-panel, .intelligence-panel, .agent-console { min-height: unset; } .score-row, .quick-replies, .trait-grid, .playbook-grid, .agent-state { grid-template-columns: 1fr 1fr; } .message { width: 100%; } }
+@media (max-width: 560px) { .score-row, .quick-replies, .trait-grid, .playbook-grid, .agent-state { grid-template-columns: 1fr; } .agent-nav { overflow-x: auto; } }
+
 
 

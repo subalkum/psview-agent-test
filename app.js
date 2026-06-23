@@ -21,6 +21,7 @@ const state = {
     sentiment: 0,
     intent: "unseen",
     signals: [],
+    learned: [],
   },
 };
 
@@ -125,7 +126,7 @@ function configureAgent() {
   state.configured = { context, persona, intelligence, policy, sequence, scores, companyTerms, candidateTerms };
   state.messages = [];
   state.run = { turn: 0, stage: "configured", followups: 0, progress: 0, lastObservation: "context loaded", lastDecision: "awaiting-start" };
-  state.candidate = { state: "Unknown", objection: "None", action: "Start", sentiment: 0, intent: "unseen", signals: [] };
+  state.candidate = { state: "Unknown", objection: "None", action: "Start", sentiment: 0, intent: "unseen", signals: [], learned: [] };
   renderAll(true);
 }
 
@@ -171,6 +172,12 @@ function buildPolicy(context, cta) {
     guardrail: "no real sends; exit on clear no; do not over-nudge after two unanswered follow-ups",
     cta,
     maxFollowups: 2,
+    playbook: [
+      { trigger: "Silence", action: "Add proof", rule: "Never repeat the same CTA twice." },
+      { trigger: "Skepticism", action: "Prove differentiation", rule: "Use company facts before persuasion." },
+      { trigger: "Scope question", action: "Qualify seniority", rule: "Clarify level before selling." },
+      { trigger: "Clear no", action: "Exit", rule: "Stop immediately and preserve trust." },
+    ],
     actions: {
       start: "Send first-touch based on candidate-company fit.",
       followup: "Add new proof, not repeated pressure.",
@@ -199,7 +206,7 @@ function startThread() {
   if (!state.configured) configureAgent();
   state.messages = [];
   state.run = { turn: 0, stage: "configured", followups: 0, progress: 0, lastObservation: "context loaded", lastDecision: "awaiting-start" };
-  state.candidate = { state: "Unknown", objection: "None", action: "Start", sentiment: 0, intent: "unseen", signals: [] };
+  state.candidate = { state: "Unknown", objection: "None", action: "Start", sentiment: 0, intent: "unseen", signals: [], learned: [] };
   const decision = runAgentCycle({ type: "start", text: "conversation opened" });
   commitAgentMessage(decision.message, decision);
 }
@@ -221,6 +228,7 @@ function runAgentCycle(event) {
   const observation = observe(event);
   const candidateModel = inferCandidate(observation);
   const decision = chooseAction(candidateModel, observation);
+  const learned = mergeUnique(state.candidate.learned || [], candidateModel.learned || []);
   const message = composeMessage(decision, observation);
 
   state.candidate = {
@@ -230,6 +238,7 @@ function runAgentCycle(event) {
     sentiment: candidateModel.sentiment,
     intent: candidateModel.intent,
     signals: candidateModel.signals,
+    learned,
   };
   state.run = {
     turn: state.run.turn + 1,
@@ -255,7 +264,7 @@ function observe(event) {
 
 function inferCandidate(observation) {
   if (observation.type === "start") {
-    return { state: "Uncontacted", objection: "None", sentiment: 0, intent: "unseen", signals: ["no prior reply"] };
+    return { state: "Uncontacted", objection: "None", sentiment: 0, intent: "unseen", signals: ["no prior reply"], learned: [] };
   }
   if (observation.type === "silence") {
     const followups = state.run.followups + 1;
@@ -265,11 +274,13 @@ function inferCandidate(observation) {
       sentiment: followups > 2 ? -2 : -1,
       intent: "silent",
       signals: [`silence_count=${followups}`],
+      learned: followups > 1 ? ["candidate has not engaged after multiple touches"] : [],
     };
   }
 
   const text = observation.text.toLowerCase();
   const signals = [];
+  const learned = [];
   let sentiment = 0;
   let intent = "ambiguous";
   let candidateState = "Passive";
@@ -280,6 +291,7 @@ function inferCandidate(observation) {
     intent = "positive";
     candidateState = "Interested";
     signals.push("positive intent");
+    learned.push("candidate is open to continuing if the agenda is concrete");
   }
   if (/(not actively|not looking|busy|later|timing|not now)/.test(text)) {
     sentiment -= 1;
@@ -287,6 +299,7 @@ function inferCandidate(observation) {
     candidateState = sentiment > 0 ? "Warm but timing-sensitive" : "Passive";
     objection = "Timing";
     signals.push("timing concern");
+    learned.push("candidate is passive or timing-sensitive");
   }
   if (/(different|why|startup|skeptical|generic|another|proof|special)/.test(text)) {
     sentiment -= 1;
@@ -294,6 +307,7 @@ function inferCandidate(observation) {
     candidateState = "Skeptical";
     objection = "Differentiation";
     signals.push("asks for proof");
+    learned.push("candidate needs differentiation proof");
   }
   if (/(comp|salary|level|scope|equity|title|seniority|money)/.test(text)) {
     sentiment += 1;
@@ -301,6 +315,7 @@ function inferCandidate(observation) {
     candidateState = "Evaluating";
     objection = "Scope and compensation";
     signals.push("evaluating level");
+    learned.push("candidate cares about level, scope, or compensation");
   }
   if (/(no|not interested|pass|unsubscribe|stop|remove)/.test(text)) {
     sentiment = -3;
@@ -308,10 +323,11 @@ function inferCandidate(observation) {
     candidateState = "Closed";
     objection = "No interest";
     signals.push("negative intent");
+    learned.push("candidate asked to close the loop");
   }
 
   if (!signals.length) signals.push("unclear reply");
-  return { state: candidateState, objection, sentiment, intent, signals };
+  return { state: candidateState, objection, sentiment, intent, signals, learned };
 }
 
 function chooseAction(candidateModel, observation) {
@@ -368,6 +384,7 @@ function commitAgentMessage(message, decision) {
   writeReasoning([
     `observe: ${decision.observation.summary}`,
     `infer: state=${decision.candidateModel.state}; intent=${decision.candidateModel.intent}; objection=${decision.candidateModel.objection}; sentiment=${decision.candidateModel.sentiment}; signals=${decision.candidateModel.signals.join(", ")}`,
+    `memory_update: ${(decision.candidateModel.learned || []).join(", ") || "none"}`, 
     `choose: ${decision.actionLabel}; stage=${decision.stage}; progress=${decision.progress}%`,
     `act: ${decision.rationale}`,
   ]);
@@ -388,7 +405,9 @@ function renderAll(resetThread = false) {
   document.getElementById("operatingPrinciple").textContent = persona.principle;
   document.getElementById("operatingCopy").textContent = `Objective: ${context.intent} Success condition: ${policy.success}. The agent runs observe -> infer -> choose -> act, and only generates copy after choosing an action.`;
   document.getElementById("traitGrid").innerHTML = persona.traits.map(({ trait, copy }) => `<div class="trait"><strong>${titleCase(trait)}</strong><p>${escapeHtml(copy)}</p></div>`).join("");
+  document.getElementById("playbookGrid").innerHTML = policy.playbook.map((item) => `<div class="playbook-card"><span>${escapeHtml(item.trigger)}</span><strong>${escapeHtml(item.action)}</strong><p>${escapeHtml(item.rule)}</p></div>`).join("");
   document.getElementById("memoryList").innerHTML = intelligence.memory.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  document.getElementById("learnedMemoryList").innerHTML = (state.candidate.learned.length ? state.candidate.learned : ["No candidate-specific memory yet. The agent will learn from replies and silence."]).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   document.getElementById("sequenceList").innerHTML = sequence.map((item) => `<article class="sequence-item"><div class="sequence-step"><span>${item.step}</span><h3>${escapeHtml(item.title)}</h3></div><div class="sequence-copy"><p>${escapeHtml(item.copy)}</p><p class="sequence-why">${escapeHtml(item.why)}</p></div></article>`).join("");
   document.getElementById("kernelGrid").innerHTML = [
     ["Goal", policy.goal],
@@ -442,6 +461,10 @@ function keywords(text, limit = 6) {
     .slice(0, limit);
 }
 
+function mergeUnique(existing, incoming) {
+  return [...new Set([...(existing || []), ...(incoming || [])])].slice(0, 8);
+}
+
 function escapeHtml(value) {
   return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
 }
@@ -472,4 +495,5 @@ document.querySelectorAll(".nav-tab").forEach((tab) => {
 });
 formIds.forEach((id) => document.getElementById(id).addEventListener("change", configureAgent));
 configureAgent();
+
 

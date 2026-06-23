@@ -9,7 +9,7 @@ A static web app that configures and previews an autonomous candidate engagement
 
 ## What I Built
 
-The app captures company context, culture, hiring profiles, candidate background, voice, CTA, and intent. From that, it builds a recruiting agent with a stable personality, interpreted company memory, outreach sequence, autonomy kernel, policy, stop rules, and simulated conversation loop. Reviewers can type candidate replies or hit Agent step to let the agent autonomously follow up, update candidate state, identify objections, choose a next action, and respond in the configured voice.
+The app captures company context, culture, hiring profiles, candidate background, voice, CTA, and intent. From that, it builds a recruiting agent with a stable personality, interpreted company memory, learned candidate memory, outreach sequence, autonomy kernel, decision playbook, policy, stop rules, and simulated conversation loop. Reviewers can type candidate replies or hit Agent step to let the agent autonomously follow up, update candidate state, identify objections, choose a next action, and respond in the configured voice.
 
 ## Choices
 
@@ -20,7 +20,7 @@ The app captures company context, culture, hiring profiles, candidate background
 
 ## What Makes The Agent Intelligent?
 
-It is not a single prompt wrapper: it first interprets company context into memory, persona, policy, success conditions, and stop rules, then runs an observe -> infer -> choose -> act loop where candidate-state inference, silence handling, and objection handling decide the next conversational action before any message is written.
+It is not a single prompt wrapper: it first interprets company context into memory, persona, policy, success conditions, and stop rules, then runs an observe -> infer -> choose -> act loop where candidate-state inference, learned memory, silence handling, and objection handling decide the next conversational action before any message is written.
 
 ## Run Locally
 
@@ -35,5 +35,6 @@ Then visit `http://localhost:5173`.
 ## Deploy
 
 This is a static app. Deploy the folder to Vercel, Netlify, Cloudflare Pages, or GitHub Pages.
+
 
 
