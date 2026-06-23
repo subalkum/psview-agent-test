@@ -1,0 +1,137 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSVIEW Agent Console</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <div class="brand-mark">PS</div>
+        <div>
+          <p class="eyebrow">Founding engineer test</p>
+          <h1>Autonomous recruiting agent cockpit</h1>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="deploy-chip">Static demo / no sends</div>
+        <button class="button secondary" id="resetDemo" type="button">Reset</button>
+        <button class="button primary" id="configureAgent" type="button">Rebuild agent</button>
+      </div>
+    </header>
+
+    <section class="workspace">
+      <aside class="context-panel surface">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">01 / Company context</p>
+            <h2>Configure the agent</h2>
+          </div>
+          <span class="status-dot">Live</span>
+        </div>
+
+        <form class="context-form" id="contextForm">
+          <label>Company<input id="companyName" value="Northstar Robotics" /></label>
+          <label>Website<input id="website" value="northstarrobotics.ai" /></label>
+          <label>What the company does<textarea id="companyContext" rows="4">Northstar Robotics builds autonomous warehouse robots for mid-market logistics teams. The product replaces repetitive picking routes with safe robotic fleets that deploy in weeks, not quarters.</textarea></label>
+          <label>Culture and operating style<textarea id="culture" rows="3">Small senior team, direct communication, high ownership, customer obsession, low ego, fast shipping cadence.</textarea></label>
+          <label>Profiles it hires<textarea id="hiringProfiles" rows="3">Senior robotics engineers, embedded systems engineers, motion planning specialists, founding account executives who have sold technical products.</textarea></label>
+          <div class="split-fields">
+            <label>Role<input id="role" value="Senior Motion Planning Engineer" /></label>
+            <label>Candidate<input id="candidateName" value="Maya" /></label>
+          </div>
+          <label>Candidate background<textarea id="candidateProfile" rows="3">Built planning systems at a drone delivery company, cares about real-world robot reliability, currently passive but open to unusually strong missions.</textarea></label>
+          <div class="split-fields">
+            <label>Voice<select id="tone"><option value="direct-warm">Direct warm</option><option value="technical">Technical precise</option><option value="founder">Founder candid</option><option value="operator">Operator concise</option><option value="high-energy">High energy</option></select></label>
+            <label>CTA<select id="cta"><option value="intro">20 min intro</option><option value="technical">Technical scope call</option><option value="coffee">Low-pressure coffee chat</option><option value="founder">Founder conversation</option></select></label>
+          </div>
+          <label>Agent intent<input id="intent" value="Start a serious conversation and earn a 20 minute intro call." /></label>
+        </form>
+      </aside>
+
+      <section class="main-stage">
+        <div class="agent-console surface">
+          <div class="agent-header">
+            <div class="agent-identity">
+              <div class="agent-avatar" id="agentInitials">AR</div>
+              <div>
+                <p class="eyebrow">02 / Self-configured agent</p>
+                <h2 id="agentName">Ari, Northstar Robotics talent agent</h2>
+                <p id="agentSummary">Calm operator with warm precision.</p>
+              </div>
+            </div>
+            <div class="score-row">
+              <div><strong id="fitScore">96</strong><span>Context fit</span></div>
+              <div><strong id="voiceScore">92</strong><span>Voice lock</span></div>
+              <div><strong id="agencyScore">89</strong><span>Agency</span></div>
+            </div>
+          </div>
+
+          <div class="agent-nav" role="tablist" aria-label="Agent workspace">
+            <button class="nav-tab active" data-view="conversation" type="button">Conversation</button>
+            <button class="nav-tab" data-view="sequence" type="button">Sequence</button>
+            <button class="nav-tab" data-view="brief" type="button">Agent brief</button>
+          </div>
+
+          <div class="view active" id="conversationView">
+            <div class="conversation-toolbar">
+              <div>
+                <p class="eyebrow">03 / Test area</p>
+                <h3>Candidate simulation</h3>
+              </div>
+              <button class="button secondary small" id="startThread" type="button">Restart thread</button>
+            </div>
+            <div class="thread" id="thread" aria-live="polite"></div>
+            <div class="quick-replies">
+              <button type="button" data-reply="Sounds interesting, but I am not actively looking right now.">Passive</button>
+              <button type="button" data-reply="What makes this different from every other robotics startup?">Skeptical</button>
+              <button type="button" data-reply="Comp and scope matter. What level is this role?">Scope</button>
+              <button type="button" data-reply="I like the mission. Happy to hear more next week.">Interested</button>
+            </div>
+            <div class="reply-box">
+              <textarea id="candidateReply" rows="3" placeholder="Type a candidate reply and watch the agent decide what to do next..."></textarea>
+              <button class="button primary" id="sendReply" type="button">Simulate</button>
+            </div>
+          </div>
+
+          <div class="view" id="sequenceView"><div class="sequence-list" id="sequenceList"></div></div>
+
+          <div class="view" id="briefView">
+            <div class="brief-grid">
+              <article class="brief-card"><p class="eyebrow">Personality</p><h3 id="personaHeadline"></h3><p id="personaSummary"></p></article>
+              <article class="brief-card"><p class="eyebrow">Operating principle</p><h3 id="operatingPrinciple"></h3><p id="operatingCopy"></p></article>
+              <article class="brief-card wide"><p class="eyebrow">Voice constraints</p><div class="trait-grid" id="traitGrid"></div></article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="intelligence-panel surface">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">04 / Agent intelligence</p>
+            <h2>Decision trace</h2>
+          </div>
+          <span class="status-dot dark">Autonomous</span>
+        </div>
+
+        <div class="agent-state">
+          <div><strong id="candidateState">Passive</strong><span>Candidate state</span></div>
+          <div><strong id="objection">None</strong><span>Objection</span></div>
+          <div><strong id="nextBestAction">Personalize</strong><span>Next action</span></div>
+        </div>
+
+        <section class="intel-section"><p class="section-label">Company memory</p><ul class="memory-list" id="memoryList"></ul></section>
+        <section class="intel-section"><p class="section-label">Reasoning policy</p><div class="policy-track"><div class="policy-step">Observe</div><div class="policy-step">Infer</div><div class="policy-step">Choose</div><div class="policy-step">Act</div></div></section>
+        <section class="intel-section"><p class="section-label">Autonomy kernel</p><div class="kernel-grid" id="kernelGrid"></div></section>
+        <section class="intel-section"><p class="section-label">Latest decision</p><pre class="reasoning-log" id="reasoningLog"></pre></section>
+      </aside>
+    </section>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
+
