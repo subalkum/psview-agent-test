@@ -51,7 +51,10 @@ h3 { margin-bottom: 0; font-size: 16px; line-height: 1.18; letter-spacing: 0; }
 .status-dot { color: var(--green); background: var(--green-soft); border: 1px solid #a7d9bf; }
 .status-dot.dark, .deploy-chip { color: #fff; background: var(--black); border: 1px solid var(--black); }
 .deploy-chip { min-height: 34px; }
-.context-form { display: grid; gap: 11px; padding-top: 14px; }
+.preset-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; padding-top: 14px; }
+.preset-row button { min-height: 32px; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); background: #fff; font-size: 12px; font-weight: 780; }
+.preset-row button:hover { color: var(--black); border-color: var(--black); }
+.context-form { display: grid; gap: 11px; padding-top: 12px; }
 label { display: grid; gap: 6px; color: #2d332f; font-size: 12px; font-weight: 750; }
 input, textarea, select { width: 100%; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #fff; outline: none; }
 input, select { height: 38px; padding: 0 10px; }
@@ -121,6 +124,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--black); box-shad
 @media (max-width: 1220px) { .workspace { grid-template-columns: 340px 1fr; } .intelligence-panel { grid-column: 1 / -1; min-height: unset; } .agent-state { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 880px) { .toolbar-actions { justify-content: flex-start; } .app-shell { padding: 10px; } .topbar, .agent-header { align-items: stretch; flex-direction: column; } .topbar-actions { justify-content: flex-start; } .workspace, .split-fields, .brief-grid, .sequence-item, .reply-box { grid-template-columns: 1fr; } .context-panel, .intelligence-panel, .agent-console { min-height: unset; } .score-row, .quick-replies, .trait-grid, .playbook-grid, .agent-state { grid-template-columns: 1fr 1fr; } .message { width: 100%; } }
 @media (max-width: 560px) { .score-row, .quick-replies, .trait-grid, .playbook-grid, .agent-state { grid-template-columns: 1fr; } .agent-nav { overflow-x: auto; } }
+
 
 
 
