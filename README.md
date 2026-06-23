@@ -2,6 +2,11 @@
 
 A static web app that configures and previews an autonomous candidate engagement agent from company context.
 
+## Links
+
+- GitHub repo: https://github.com/subalkum/psview-agent-test
+- GitHub Pages target: http://subal.me/psview-agent-test/
+
 ## What I Built
 
 The app captures company context, culture, hiring profiles, candidate background, voice, CTA, and intent. From that, it builds a recruiting agent with a stable personality, company memory, outreach sequence, autonomy kernel, and simulated conversation loop. Reviewers can type candidate replies and see the agent update candidate state, identify objections, choose a next action, and respond in the configured voice.
@@ -30,3 +35,4 @@ Then visit `http://localhost:5173`.
 ## Deploy
 
 This is a static app. Deploy the folder to Vercel, Netlify, Cloudflare Pages, or GitHub Pages.
+
